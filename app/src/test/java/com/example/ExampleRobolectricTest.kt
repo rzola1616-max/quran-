@@ -18,4 +18,12 @@ class ExampleRobolectricTest {
     val appName = context.getString(R.string.app_name)
     assertEquals("Quran Companion", appName)
   }
+
+  @Test
+  fun `configureAppCheck runs safely without crashing`() {
+    val context = ApplicationProvider.getApplicationContext<Context>()
+    // Must execute cleanly without throwing IllegalStateException
+    com.example.core.ai.configureAppCheck(context, null)
+  }
 }
+

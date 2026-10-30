@@ -37,6 +37,7 @@ import com.example.feature.progress.ProgressScreen
 import com.example.feature.quran.BookmarksScreen
 import com.example.feature.quran.QuranReaderScreen
 import com.example.feature.quran.SearchScreen
+import com.example.feature.daily_lesson.DailyLessonScreen
 import com.example.feature.admin.AdminPortalScreen
 import com.example.feature.quran.SurahListScreen
 import com.example.feature.settings.AboutScreen
@@ -52,6 +53,7 @@ enum class Screen {
     QURAN,
     LEARN,
     AI_TEACHER,
+    DAILY_LESSON,
     PROGRESS,
     QURAN_READER,
     SEARCH,
@@ -203,6 +205,12 @@ fun QuranCompanionApp(
     val lastRead by quranRepo.getLastRead().collectAsState(initial = null)
     val hifzItems by hifzRepo.getAllHifzItems().collectAsState(initial = emptyList())
     val lessonProgressList by learningRepo.getAllProgress().collectAsState(initial = emptyList())
+    val completedDailyLessons = remember(lessonProgressList) {
+        lessonProgressList
+            .filter { it.lessonId.startsWith("daily_lesson_") && it.isCompleted }
+            .mapNotNull { it.lessonId.removePrefix("daily_lesson_").toIntOrNull() }
+            .toSet()
+    }
     val downloadPacks by downloadRepo.getAllPacks().collectAsState(initial = emptyList())
 
     val adminReports by adminDao.getAllReports().collectAsState(initial = emptyList())
@@ -318,6 +326,7 @@ fun QuranCompanionApp(
                     },
                     onNavigateToLearn = { navigateTo(Screen.LEARN) },
                     onNavigateToAiTeacher = { navigateTo(Screen.AI_TEACHER) },
+                    onNavigateToDailyLesson = { navigateTo(Screen.DAILY_LESSON) },
                     onNavigateToHifz = { navigateTo(Screen.PROGRESS) },
                     onNavigateToDownloads = { navigateTo(Screen.DOWNLOADS) },
                     modifier = Modifier.padding(innerPadding)
@@ -453,6 +462,31 @@ fun QuranCompanionApp(
                     },
                     onOpenAiAssistant = { navigateTo(Screen.AI_ASSISTANT) },
                     modifier = Modifier.padding(innerPadding)
+                )
+            }
+
+            Screen.DAILY_LESSON -> {
+                DailyLessonScreen(
+                    currentDay = (completedDailyLessons.size + 1).coerceIn(1, 30),
+                    completedDays = completedDailyLessons,
+                    engine = recitationEngine,
+                    engineState = recitationState,
+                    onPlayReferenceAudio = { surah, ayah ->
+                        audioService.playAyah(surah, ayah)
+                    },
+                    onMarkLessonCompleted = { day, score ->
+                        coroutineScope.launch {
+                            val dbInstance = com.example.core.database.AppDatabase.getInstance(context)
+                            dbInstance.userProgressDao().updateLessonProgress(
+                                com.example.core.database.LessonProgressEntity(
+                                    lessonId = "daily_lesson_$day",
+                                    isCompleted = true,
+                                    score = score
+                                )
+                            )
+                        }
+                    },
+                    onBack = { navigateBack() }
                 )
             }
 

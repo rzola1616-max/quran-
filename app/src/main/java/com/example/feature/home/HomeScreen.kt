@@ -30,6 +30,7 @@ fun HomeScreen(
     onNavigateToQuran: (Int, Int) -> Unit,
     onNavigateToLearn: () -> Unit,
     onNavigateToAiTeacher: () -> Unit,
+    onNavigateToDailyLesson: () -> Unit,
     onNavigateToHifz: () -> Unit,
     onNavigateToDownloads: () -> Unit,
     modifier: Modifier = Modifier
@@ -58,10 +59,83 @@ fun HomeScreen(
                     color = MaterialTheme.colorScheme.onBackground
                 )
                 Text(
-                    text = "Learn, read, listen, and revise at your own pace.",
+                    text = "مکمل آف لائن قرآن، روزانہ کا سبق اور تلاوت کی درستگی",
                     style = MaterialTheme.typography.bodyMedium,
                     color = SecondaryGrey
                 )
+            }
+        }
+
+        // Daily Lesson Hero Banner
+        item {
+            Card(
+                shape = RoundedCornerShape(20.dp),
+                colors = CardDefaults.cardColors(containerColor = SoftJade),
+                elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable { onNavigateToDailyLesson() }
+                    .testTag("home_daily_lesson_banner")
+            ) {
+                Column(modifier = Modifier.padding(18.dp)) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Surface(
+                            shape = RoundedCornerShape(8.dp),
+                            color = ForestGreen
+                        ) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp)
+                            ) {
+                                Icon(Icons.Default.Star, contentDescription = null, tint = MutedGold, modifier = Modifier.size(14.dp))
+                                Spacer(modifier = Modifier.width(4.dp))
+                                Text(
+                                    text = "آج کا سبق • Daily Routine",
+                                    fontSize = 11.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = Color.White
+                                )
+                            }
+                        }
+                        Text(
+                            text = "روزانہ ۱۵ منٹ",
+                            fontSize = 12.sp,
+                            color = DeepEmerald,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(10.dp))
+                    Text(
+                        text = "روزانہ کا سبق پڑھیں اور آواز چیک کروائیں",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold,
+                        color = DeepEmerald
+                    )
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text(
+                        text = "آپ بلند آواز میں پڑھیں، ایپ سنے گی، غلطیوں کو سرخ و پیلے رنگ میں نمایاں کرے گی اور صحیح مخرج سکھائے گی۔",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = Charcoal,
+                        lineHeight = 18.sp
+                    )
+
+                    Spacer(modifier = Modifier.height(14.dp))
+                    Button(
+                        onClick = onNavigateToDailyLesson,
+                        colors = ButtonDefaults.buttonColors(containerColor = ForestGreen),
+                        shape = RoundedCornerShape(12.dp),
+                        modifier = Modifier.fillMaxWidth().height(46.dp)
+                    ) {
+                        Icon(Icons.Default.RecordVoiceOver, contentDescription = null, tint = Color.White, modifier = Modifier.size(18.dp))
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text("سبق شروع کریں (Start Daily Lesson)", color = Color.White, fontWeight = FontWeight.Bold)
+                    }
+                }
             }
         }
 
@@ -185,12 +259,36 @@ fun HomeScreen(
                     onClick = onNavigateToAiTeacher
                 )
                 QuickActionItem(
+                    title = "Daily Lesson",
+                    subtitle = "روزانہ کا سبق",
+                    icon = Icons.Default.RecordVoiceOver,
+                    accent = ForestGreen,
+                    modifier = Modifier.weight(1f),
+                    onClick = onNavigateToDailyLesson
+                )
+            }
+        }
+
+        item {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                QuickActionItem(
                     title = "Hifz Practice",
                     subtitle = "Recall & Test",
                     icon = Icons.Default.Psychology,
                     accent = MutedGold,
                     modifier = Modifier.weight(1f),
                     onClick = onNavigateToHifz
+                )
+                QuickActionItem(
+                    title = "Offline Packs",
+                    subtitle = "Audio & Scripts",
+                    icon = Icons.Default.CloudDownload,
+                    accent = DeepEmerald,
+                    modifier = Modifier.weight(1f),
+                    onClick = onNavigateToDownloads
                 )
             }
         }

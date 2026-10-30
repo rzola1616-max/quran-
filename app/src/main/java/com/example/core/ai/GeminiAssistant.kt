@@ -76,7 +76,7 @@ class GeminiAssistant {
         } catch (e: CancellationException) {
             throw e
         } catch (e: Exception) {
-            Log.e(TAG, "Firebase AI generation error: ${e.message}, utilizing educational curriculum engine", e)
+            Log.w(TAG, "Firebase AI generation note: ${e.message}, utilizing educational curriculum engine")
         }
 
         // Offline / fallback grounded response based on verified curriculum

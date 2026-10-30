@@ -32,8 +32,12 @@ import com.example.core.ai.RecitationEngineState
 import com.example.core.ai.RecitationIssue
 import com.example.core.ai.RecitationRecognitionEngine
 import com.example.core.database.AyahEntity
+import com.example.core.ai.WordAssessment
+import com.example.feature.daily_lesson.WordHighlightChip
+import com.example.feature.daily_lesson.WordCorrectionCard
 import com.example.ui.theme.*
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun AiTeacherScreen(
     engine: RecitationRecognitionEngine,
@@ -44,6 +48,7 @@ fun AiTeacherScreen(
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
+    var selectedWordForCorrection by remember { mutableStateOf<WordAssessment?>(null) }
     var hasMicPermission by remember {
         mutableStateOf(
             ContextCompat.checkSelfPermission(
@@ -314,10 +319,45 @@ fun AiTeacherScreen(
                             )
                             Spacer(modifier = Modifier.height(4.dp))
                             Text(
-                                text = "Overall Confidence: ${(engineState.overallConfidence * 100).toInt()}%",
+                                text = "صحتِ تلاوت: ${engineState.accuracyPercentage}% • اعتماد: ${(engineState.overallConfidence * 100).toInt()}%",
                                 style = MaterialTheme.typography.bodySmall,
+                                fontWeight = FontWeight.Bold,
+                                color = ForestGreen
+                            )
+
+                            Spacer(modifier = Modifier.height(12.dp))
+                            Text(
+                                text = "الفاظ پر چھو کر تلفظ کی جانچ اور آواز سنیں:",
+                                style = MaterialTheme.typography.labelSmall,
                                 color = SecondaryGrey
                             )
+                            Spacer(modifier = Modifier.height(6.dp))
+
+                            FlowRow(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.End,
+                                verticalArrangement = Arrangement.spacedBy(6.dp)
+                            ) {
+                                engineState.wordAssessments.forEach { wordItem ->
+                                    WordHighlightChip(
+                                        assessment = wordItem,
+                                        isSelected = selectedWordForCorrection?.index == wordItem.index,
+                                        onClick = {
+                                            selectedWordForCorrection = wordItem
+                                            engine.speakWord(wordItem.wordArabic)
+                                        }
+                                    )
+                                }
+                            }
+
+                            selectedWordForCorrection?.let { wordAssess ->
+                                Spacer(modifier = Modifier.height(10.dp))
+                                WordCorrectionCard(
+                                    assessment = wordAssess,
+                                    onHearAudio = { engine.speakWord(wordAssess.wordArabic) },
+                                    onDismiss = { selectedWordForCorrection = null }
+                                )
+                            }
 
                             if (engineState.issues.isNotEmpty()) {
                                 Spacer(modifier = Modifier.height(12.dp))

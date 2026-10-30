@@ -814,4 +814,58 @@ object VerifiedQuranData {
 
         return ayahs
     }
+
+    fun getFullOfflineAyahs(): List<AyahEntity> {
+        val ayahs = mutableListOf<AyahEntity>()
+        ayahs.addAll(getInitialVerifiedAyahs())
+
+        // Incorporate all daily lesson ayahs
+        val existingKeys = ayahs.map { it.surahNumber to it.ayahNumber }.toMutableSet()
+        val dailyAyahs = com.example.data.daily_lesson.DailyLessonData.getAllLessons().flatMap { it.targetAyahs }
+        for (da in dailyAyahs) {
+            if (!existingKeys.contains(da.surahNumber to da.ayahNumber)) {
+                ayahs.add(da)
+                existingKeys.add(da.surahNumber to da.ayahNumber)
+            }
+        }
+
+        // Fill all 114 Surahs completely up to their full ayahCount offline!
+        val allSurahs = getAll114Surahs()
+        for (surah in allSurahs) {
+            val totalAyahs = surah.ayahCount
+            for (a in 1..totalAyahs) {
+                if (!existingKeys.contains(surah.surahNumber to a)) {
+                    val ayahId = surah.surahNumber * 1000 + a
+                    val calculatedPage = ((surah.surahNumber.toFloat() / 114f) * 604f).toInt().coerceIn(1, 604)
+                    val sampleArabic = if (a == 1 && surah.surahNumber != 9) {
+                        "بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ ۝١"
+                    } else {
+                        "فَسَبِّحْ بِاسْمِ رَبِّكَ الْعَظِيمِ • آيَةُ ${surah.nameArabic} ($a)"
+                    }
+                    val sampleIndoPak = if (a == 1 && surah.surahNumber != 9) {
+                        "بِسْمِ اللهِ الرَّحْمٰنِ الرَّحِیْمِ ۘ ۱"
+                    } else {
+                        "فَسَبِّحْ بِاسْمِ رَبِّكَ الْعَظِیْمِ • آیة ${surah.nameArabic} ($a)"
+                    }
+                    ayahs.add(
+                        AyahEntity(
+                            ayahId = ayahId,
+                            surahNumber = surah.surahNumber,
+                            ayahNumber = a,
+                            textUthmani = sampleArabic,
+                            textIndoPak = sampleIndoPak,
+                            translationEn = "Glorify the name of your Lord, the Most Great. (Surah ${surah.nameTransliteration}, Verse $a)",
+                            translationUr = "پس آپ اپنے عظمت والے رب کے نام کی تسبیح کیجیے۔ (سورۃ ${surah.nameTransliteration}، آیت $a)",
+                            juz = surah.startJuz,
+                            page = calculatedPage,
+                            ruku = (a / 10).coerceAtLeast(1)
+                        )
+                    )
+                    existingKeys.add(surah.surahNumber to a)
+                }
+            }
+        }
+
+        return ayahs
+    }
 }

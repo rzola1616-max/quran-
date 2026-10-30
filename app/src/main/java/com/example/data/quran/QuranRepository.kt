@@ -18,8 +18,8 @@ class QuranRepository(context: Context) {
             val surahs = VerifiedQuranData.getAll114Surahs()
             quranDao.insertSurahs(surahs)
         }
-        if (quranDao.getAyahCount() < 100) {
-            val ayahs = VerifiedQuranData.getInitialVerifiedAyahs()
+        if (quranDao.getAyahCount() < 5000) {
+            val ayahs = VerifiedQuranData.getFullOfflineAyahs()
             quranDao.insertAyahs(ayahs)
             userProgressDao.setLastRead(
                 LastReadEntity(
