@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quran Companion | القرآن الكريم - Learn Quran & Tajweed</title>
+  <meta name="description" content="Complete Offline Quran with 114 Surahs, Daily Lessons, Voice Recitation Evaluation, and Word-by-Word Tajweed Correction.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Noto+Nastaliq+Urdu:wght@400;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #1A5336;
+      --primary-dark: #0F3321;
+      --primary-light: #2D7A52;
+      --accent-gold: #C5A059;
+      --accent-gold-light: #DFBA73;
+      --bg-cream: #F8F9FA;
+      --card-bg: #FFFFFF;
+      --text-main: #1E293B;
+      --text-muted: #64748B;
+      --border-color: #E2E8F0;
+      --success: #16A34A;
+      --warning: #D97706;
+      --danger: #DC2626;
+      --shadow: 0 10px 25px -5px rgba(26, 83, 54, 0.08), 0 8px 10px -6px rgba(26, 83, 54, 0.04);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: var(--bg-cream);
+      color: var(--text-main);
+      line-height: 1.6;
+    }
+
+    .arabic-text {
+      font-family: 'Amiri', serif;
+      direction: rtl;
+    }
+
+    .urdu-text {
+      font-family: 'Noto Nastaliq Urdu', serif;
+      direction: rtl;
+    }
+
+    header {
+      background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%);
+      color: white;
+      padding: 3rem 1.5rem 4rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    header::before {
+      content: "";
+      position: absolute;
+      top: -50px;
+      right: -50px;
+      width: 250px;
+      height: 250px;
+      background: radial-gradient(circle, rgba(197, 160, 89, 0.25) 0%, transparent 70%);
+      border-radius: 50%;
+    }
+
+    .header-content {
+      max-width: 850px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(197, 160, 89, 0.2);
+      border: 1px solid var(--accent-gold);
+      color: var(--accent-gold-light);
+      padding: 0.4rem 1.2rem;
+      border-radius: 9999px;
+      font-size: 0.875rem;
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+    }
+
+    h1 {
+      font-size: 2.75rem;
+      font-weight: 800;
+      line-height: 1.2;
+      margin-bottom: 1rem;
+    }
+
+    .arabic-title {
+      font-size: 2.5rem;
+      color: var(--accent-gold-light);
+      margin-bottom: 0.5rem;
+      display: block;
+    }
+
+    p.subtitle {
+      font-size: 1.2rem;
+      color: #E2E8F0;
+      margin-bottom: 2rem;
+    }
+
+    .btn-group {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 0.85rem 1.75rem;
+      border-radius: 0.75rem;
+      font-size: 1rem;
+      font-weight: 600;
+      text-decoration: none;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      border: none;
+    }
+
+    .btn-primary {
+      background: var(--accent-gold);
+      color: #0F3321;
+      box-shadow: 0 4px 14px rgba(197, 160, 89, 0.4);
+    }
+
+    .btn-primary:hover {
+      background: var(--accent-gold-light);
+      transform: translateY(-2px);
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.12);
+      color: white;
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.2);
+      transform: translateY(-2px);
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: -2.5rem auto 3rem;
+      padding: 0 1.5rem;
+      position: relative;
+      z-index: 2;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 3rem;
+    }
+
+    .feature-card {
+      background: var(--card-bg);
+      border-radius: 1rem;
+      padding: 1.75rem;
+      border: 1px solid var(--border-color);
+      box-shadow: var(--shadow);
+      transition: transform 0.2s;
+    }
+
+    .feature-card:hover {
+      transform: translateY(-4px);
+    }
+
+    .feature-icon {
+      width: 48px;
+      height: 48px;
+      background: rgba(26, 83, 54, 0.1);
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 0.75rem;
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .feature-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--primary-dark);
+      margin-bottom: 0.5rem;
+    }
+
+    .interactive-section {
+      background: var(--card-bg);
+      border-radius: 1.25rem;
+      border: 1px solid var(--border-color);
+      box-shadow: var(--shadow);
+      padding: 2rem;
+      margin-bottom: 3rem;
+    }
+
+    .section-header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .section-header h2 {
+      font-size: 1.85rem;
+      color: var(--primary-dark);
+      font-weight: 800;
+    }
+
+    .surah-tabs {
+      display: flex;
+      gap: 0.5rem;
+      overflow-x: auto;
+      padding-bottom: 0.75rem;
+      margin-bottom: 1.5rem;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .surah-tab {
+      padding: 0.6rem 1.2rem;
+      border-radius: 0.5rem;
+      background: transparent;
+      border: 1px solid transparent;
+      color: var(--text-muted);
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.2s;
+    }
+
+    .surah-tab.active {
+      background: var(--primary);
+      color: white;
+    }
+
+    .ayah-card {
+      background: #FDFBF7;
+      border: 1px solid #EFE8D8;
+      border-radius: 0.85rem;
+      padding: 1.5rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .ayah-header {
+      display: flex;
+      justify-content: space-between;
+      color: var(--accent-gold);
+      font-weight: 700;
+      font-size: 0.9rem;
+      margin-bottom: 1rem;
+    }
+
+    .ayah-arabic {
+      font-size: 2.2rem;
+      line-height: 2;
+      color: var(--primary-dark);
+      margin-bottom: 1rem;
+      text-align: right;
+    }
+
+    .ayah-urdu {
+      font-size: 1.2rem;
+      line-height: 2;
+      color: #334155;
+      text-align: right;
+      margin-bottom: 0.5rem;
+      border-top: 1px dashed #E2E8F0;
+      padding-top: 0.75rem;
+    }
+
+    .ayah-english {
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      font-style: italic;
+    }
+
+    /* Recitation & Highlights Demo */
+    .recitation-box {
+      background: #F8FAFC;
+      border: 1px solid #E2E8F0;
+      border-radius: 1rem;
+      padding: 1.5rem;
+      margin-top: 1.5rem;
+    }
+
+    .words-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      direction: rtl;
+      justify-content: flex-start;
+      margin: 1.5rem 0;
+    }
+
+    .word-chip {
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 0.5rem 0.85rem;
+      border-radius: 0.6rem;
+      border: 1px solid;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .word-chip.correct {
+      background: #DCFCE7;
+      border-color: #86EFAC;
+      color: #15803D;
+    }
+
+    .word-chip.warning {
+      background: #FEF3C7;
+      border-color: #FCD34D;
+      color: #B45309;
+    }
+
+    .word-chip.correction {
+      background: #FEE2E2;
+      border-color: #FCA5A5;
+      color: #B91C1C;
+    }
+
+    .word-arabic {
+      font-size: 1.5rem;
+      font-family: 'Amiri', serif;
+    }
+
+    .word-status {
+      font-size: 0.75rem;
+      font-weight: 600;
+      margin-top: 0.2rem;
+    }
+
+    footer {
+      text-align: center;
+      padding: 2.5rem 1.5rem;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      border-top: 1px solid var(--border-color);
+      background: white;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="header-content">
+      <span class="badge">✨ Verified Offline Quran & AI Tajweed Companion</span>
+      <span class="arabic-title arabic-text">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</span>
+      <h1>Quran Companion</h1>
+      <p class="subtitle">Complete 114 Surahs Offline, Daily Lessons, Voice Recitation Evaluator & Word-by-Word Tajweed Correction</p>
+      
+      <div class="btn-group">
+        <a href="#quran-reader" class="btn btn-primary">📖 Read Quran Online</a>
+        <a href="#evaluation-demo" class="btn btn-secondary">🎙️ Voice & Tajweed Demo</a>
+      </div>
+    </div>
+  </header>
+
+  <div class="container">
+    <!-- Highlights Features -->
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">📖</div>
+        <div class="feature-title">114 Surahs 100% Offline</div>
+        <p class="text-muted">Full Holy Quran with authentic Uthmani script, Urdu translation by Fateh Muhammad Jalandhari, and English translation by Saheeh International.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">🎙️</div>
+        <div class="feature-title">Voice Recitation Check</div>
+        <p class="text-muted">Recite directly into the app. The intelligent recitation engine listens, verifies word-by-word pronunciation, and provides immediate visual feedback.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">🎯</div>
+        <div class="feature-title">Color-Coded Tajweed Chips</div>
+        <p class="text-muted">Green for accurate recitation, amber for Tajweed reminders (Ghunnah, Ikhfa, Qalqalah), and red with corrective audio and articulation guides.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">📅</div>
+        <div class="feature-title">30-Day Structured Lessons</div>
+        <p class="text-muted">Gradual curriculum from Arabic alphabet Makharij to Noon Sakin, Meem Sakin, Madd elongation, and practical Surah mastery.</p>
+      </div>
+    </div>
+
+    <!-- Quran Online Preview -->
+    <div class="interactive-section" id="quran-reader">
+      <div class="section-header">
+        <h2>قرآن مجید - Surah Reader</h2>
+        <p style="color: var(--text-muted);">Explore verses with Arabic, Urdu, and English offline</p>
+      </div>
+
+      <div class="surah-tabs" id="surahTabs">
+        <button class="surah-tab active" onclick="loadSurah('fatihah')">Surah Al-Fatihah (الفاتحة)</button>
+        <button class="surah-tab" onclick="loadSurah('ikhlas')">Surah Al-Ikhlas (الإخلاص)</button>
+        <button class="surah-tab" onclick="loadSurah('falaq')">Surah Al-Falaq (الفلق)</button>
+        <button class="surah-tab" onclick="loadSurah('nas')">Surah An-Nas (الناس)</button>
+        <button class="surah-tab" onclick="loadSurah('kursi')">Ayat Al-Kursi (آية الكرسي)</button>
+      </div>
+
+      <div id="ayahList">
+        <!-- Rendered by JavaScript -->
+      </div>
+    </div>
+
+    <!-- Live Evaluation Demo -->
+    <div class="interactive-section" id="evaluation-demo">
+      <div class="section-header">
+        <h2>🎙️ Voice Evaluation & Tajweed Correction Demo</h2>
+        <p style="color: var(--text-muted);">See how the app listens and highlights pronunciation accuracy word-by-word</p>
+      </div>
+
+      <div class="recitation-box">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+          <strong style="color: var(--primary);">Recitation Practice: Surah Al-Fatihah (Ayah 1 & 2)</strong>
+          <span style="font-size: 0.85rem; background: #E0E7FF; color: #3730A3; padding: 0.3rem 0.75rem; border-radius: 999px; font-weight: 700;">Score: 92% (Excellent)</span>
+        </div>
+
+        <p style="font-size: 0.9rem; color: var(--text-muted);">Click on any highlighted word chip below to view the Tajweed analysis & corrective feedback:</p>
+
+        <div class="words-container">
+          <div class="word-chip correct" onclick="showFeedback('بِسْمِ', 'Correct pronunciation with soft Ba.')">
+            <span class="word-arabic">بِسْمِ</span>
+            <span class="word-status">✓ Perfect</span>
+          </div>
+          <div class="word-chip correct" onclick="showFeedback('اللَّهِ', 'Majestic name of Allah pronounced with proper Tarqeeq.')">
+            <span class="word-arabic">اللَّهِ</span>
+            <span class="word-status">✓ Perfect</span>
+          </div>
+          <div class="word-chip warning" onclick="showFeedback('الرَّحْمَٰنِ', 'Tajweed Note: Ensure proper vibration of Raa with Tashdeed (Takreer khiffah).')">
+            <span class="word-arabic">الرَّحْمَٰنِ</span>
+            <span class="word-status">⚠️ Tajweed</span>
+          </div>
+          <div class="word-chip correct" onclick="showFeedback('الرَّحِيمِ', 'Correct Madd Arid Lissukoon at verse end.')">
+            <span class="word-arabic">الرَّحِيمِ</span>
+            <span class="word-status">✓ Perfect</span>
+          </div>
+          <div class="word-chip correct" onclick="showFeedback('الْحَمْدُ', 'Clear Izhar of Lam Qamariyyah.')">
+            <span class="word-arabic">الْحَمْدُ</span>
+            <span class="word-status">✓ Perfect</span>
+          </div>
+          <div class="word-chip correct" onclick="showFeedback('لِلَّهِ', 'Proper soft pronunciation of Lam.')">
+            <span class="word-arabic">لِلَّهِ</span>
+            <span class="word-status">✓ Perfect</span>
+          </div>
+          <div class="word-chip correction" onclick="showFeedback('رَبِّ', 'Correction Tip: The Ba has Shaddah (Tashdeed). Pronounce with firm emphasis on Ba, not relaxed.')">
+            <span class="word-arabic">رَبِّ</span>
+            <span class="word-status">❌ Correction</span>
+          </div>
+          <div class="word-chip correct" onclick="showFeedback('الْعَالَمِينَ', 'Clear Ain from middle throat articulation.')">
+            <span class="word-arabic">الْعَالَمِينَ</span>
+            <span class="word-status">✓ Perfect</span>
+          </div>
+        </div>
+
+        <div id="feedbackCard" style="background: white; border: 1px solid var(--border-color); border-radius: 0.75rem; padding: 1rem; margin-top: 1rem; display: none;">
+          <h4 id="feedbackWord" style="color: var(--primary-dark); font-size: 1.2rem; font-family: 'Amiri', serif; margin-bottom: 0.25rem;"></h4>
+          <p id="feedbackText" style="color: var(--text-main); font-size: 0.95rem;"></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <p>Quran Companion • القرآن الكريم • Built with Jetpack Compose & Cloudflare</p>
+    <p style="margin-top: 0.5rem; font-size: 0.8rem; color: #94A3B8;">All Quranic texts verified against Madani Mushaf standard. Authentic offline translations included.</p>
+  </footer>
+
+  <script>
+    const surahData = {
+      fatihah: [
+        { num: 1, ar: "بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ", ur: "شروع اللہ کا نام لے کر جو بڑا مہربان نہایت رحم والا ہے", en: "In the name of Allah, the Entirely Merciful, the Especially Merciful." },
+        { num: 2, ar: "الْحَمْدُ لِلَّهِ رَبِّ الْعَالَمِينَ", ur: "سب طرح کی تعریف اللہ ہی کے لیے ہے جو تمام جہانوں کا پروردگار ہے", en: "[All] praise is [due] to Allah, Lord of the worlds -" },
+        { num: 3, ar: "الرَّحْمَٰنِ الرَّحِيمِ", ur: "بڑا مہربان نہایت رحم والا", en: "The Entirely Merciful, the Especially Merciful," },
+        { num: 4, ar: "مَالِكِ يَوْمِ الدِّينِ", ur: "روزِ جزا کا مالک", en: "Sovereign of the Day of Recompense." },
+        { num: 5, ar: "إِيَّاكَ نَعْبُدُ وَإِيَّاكَ نَسْتَعِينُ", ur: "ہم تیری ہی عبادت کرتے ہیں اور تجھ ہی سے مدد مانگتے ہیں", en: "It is You we worship and You we ask for help." },
+        { num: 6, ar: "اهْدِنَا الصِّرَاطَ الْمُسْتَقِيمَ", ur: "ہم کو سیدھے راستے پر چلا", en: "Guide us to the straight path -" },
+        { num: 7, ar: "صِرَاطَ الَّذِينَ أَنْعَمْتَ عَلَيْهِمْ غَيْرِ الْمَغْضُوبِ عَلَيْهِمْ وَلَا الضَّالِّينَ", ur: "ان لوگوں کے راستے پر جن پر تو نے انعام فرمایا، نہ ان کے جن پر غضب نازل ہوا اور نہ گمراہوں کے", en: "The path of those upon whom You have bestowed favor, not of those who have evoked [Your] anger or of those who are astray." }
+      ],
+      ikhlas: [
+        { num: 1, ar: "قُلْ هُوَ اللَّهُ أَحَدٌ", ur: "کہو کہ وہ اللہ یکتا ہے", en: "Say, 'He is Allah, [who is] One,'" },
+        { num: 2, ar: "اللَّهُ الصَّمَدُ", ur: "اللہ بے نیاز ہے", en: "Allah, the Eternal Refuge." },
+        { num: 3, ar: "لَمْ يَلِدْ وَلَمْ يُولَدْ", ur: "نہ اس نے کسی کو جنا اور نہ وہ جنا گیا", en: "He neither begets nor is born," },
+        { num: 4, ar: "وَلَمْ يَكُن لَّهُ كُفُوًا أَحَدٌ", ur: "اور کوئی اس کا ہمسر نہیں", en: "Nor is there to Him any equivalent.'" }
+      ],
+      falaq: [
+        { num: 1, ar: "قُلْ أَعُوذُ بِرَبِّ الْفَلَقِ", ur: "کہو کہ میں صبح کے مالک کی پناہ مانگتا ہوں", en: "Say, 'I seek refuge in the Lord of daybreak'" },
+        { num: 2, ar: "مِن شَرِّ مَا خَلَقَ", ur: "ہر اس چیز کی برائی سے جو اس نے پیدا کی", en: "From the evil of that which He created" },
+        { num: 3, ar: "وَمِن شَرِّ غَاسِقٍ إِذَا وَقَبَ", ur: "اور اندھیری رات کی برائی سے جب وہ چھا جائے", en: "And from the evil of darkness when it settles" },
+        { num: 4, ar: "وَمِن شَرِّ النَّفَّاثَاتِ فِي الْعُقَدِ", ur: "اور گرہوں میں پھونکنے والیوں کی برائی سے", en: "And from the evil of the blowers in knots" },
+        { num: 5, ar: "وَمِن شَرِّ حَاسِدٍ إِذَا حَسَدَ", ur: "اور حسد کرنے والے کی برائی سے جب وہ حسد کرے", en: "And from the evil of an envier when he envies.'" }
+      ],
+      nas: [
+        { num: 1, ar: "قُلْ أَعُوذُ بِرَبِّ النَّاسِ", ur: "کہو کہ میں انسانوں کے پروردگار کی پناہ مانگتا ہوں", en: "Say, 'I seek refuge in the Lord of mankind,'" },
+        { num: 2, ar: "مَلِكِ النَّاسِ", ur: "انسانوں کے بادشاہ کی", en: "The Sovereign of mankind," },
+        { num: 3, ar: "إِلَٰهِ النَّاسِ", ur: "انسانوں کے معبود کی", en: "The God of mankind," },
+        { num: 4, ar: "مِن شَرِّ الْوَسْوَاسِ الْخَنَّاسِ", ur: "وسوسہ ڈالنے والے پیچھے ہٹ جانے والے کے شر سے", en: "From the evil of the retreating whisperer -" },
+        { num: 5, ar: "الَّذِي يُوَسْوِسُ فِي صُدُورِ النَّاسِ", ur: "جو لوگوں کے دلوں میں وسوسے ڈالتا ہے", en: "Who whispers into the breasts of mankind -" },
+        { num: 6, ar: "مِنَ الْجِنَّةِ وَالنَّاسِ", ur: "خواہ وہ جنوں میں سے ہو یا انسانوں میں سے", en: "From among the jinn and mankind.'" }
+      ],
+      kursi: [
+        { num: 255, ar: "اللَّهُ لَا إِلَٰهَ إِلَّا هُوَ الْحَيُّ الْقَيُّومُ ۚ لَا تَأْخُذُهُ سِنَةٌ وَلَا نَوْمٌ ۚ لَّهُ مَا فِي السَّمَاوَاتِ وَمَا فِي الْأَرْضِ", ur: "اللہ ہی معبود برحق ہے جس کے سوا کوئی معبود نہیں، وہ زندہ ہے سب کا نگہبان، نہ اس کو اونگھ آتی ہے نہ نیند۔ جو کچھ آسمانوں میں ہے اور جو زمین میں ہے سب اسی کا ہے۔", en: "Allah - there is no deity except Him, the Ever-Living, the Sustainer of [all] existence. Neither drowsiness overtakes Him nor sleep. To Him belongs whatever is in the heavens and whatever is on the earth." }
+      ]
+    };
+
+    function loadSurah(key) {
+      const container = document.getElementById('ayahList');
+      const tabs = document.querySelectorAll('.surah-tab');
+      tabs.forEach(t => t.classList.remove('active'));
+      event.target.classList.add('active');
+
+      const ayahs = surahData[key] || [];
+      container.innerHTML = ayahs.map(a => `
+        <div class="ayah-card">
+          <div class="ayah-header">
+            <span>Ayah ${a.num}</span>
+            <span>Verse</span>
+          </div>
+          <div class="ayah-arabic arabic-text">${a.ar}</div>
+          <div class="ayah-urdu urdu-text">${a.ur}</div>
+          <div class="ayah-english">${a.en}</div>
+        </div>
+      `).join('');
+    }
+
+    function showFeedback(word, text) {
+      const card = document.getElementById('feedbackCard');
+      document.getElementById('feedbackWord').textContent = word;
+      document.getElementById('feedbackText').textContent = text;
+      card.style.display = 'block';
+    }
+
+    // Initialize with Al-Fatihah
+    window.addEventListener('DOMContentLoaded', () => {
+      loadSurah('fatihah');
+    });
+  </script>
+</body>
+</html>

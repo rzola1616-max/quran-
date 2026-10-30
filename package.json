@@ -1,0 +1,16 @@
+{
+  "name": "quran-companion",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Quran Companion - Complete Offline Quran, Daily Lessons & Tajweed Correction",
+  "scripts": {
+    "build": "node build.js",
+    "start": "node -e \"const http=require('http'),fs=require('fs');http.createServer((req,res)=>{const f=req.url==='/'?'/dist/index.html':'/dist'+req.url;if(fs.existsSync('.'+f)){res.end(fs.readFileSync('.'+f));}else{res.end(fs.readFileSync('./dist/index.html'));}}).listen(3000,()=>console.log('Serving http://localhost:3000'))\""
+  },
+  "keywords": [
+    "quran",
+    "android",
+    "tajweed",
+    "islamic-learning"
+  ]
+}
