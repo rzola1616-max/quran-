@@ -1,0 +1,6 @@
+{
+  "name": "Quran Companion",
+  "description": "Learn, read, listen, revise, and practise the Quran offline-first with AI assistance.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
