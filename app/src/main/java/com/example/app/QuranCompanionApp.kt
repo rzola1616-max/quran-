@@ -85,7 +85,8 @@ fun QuranCompanionApp(
     val downloadRepo = remember { DownloadPackRepository(context) }
     val audioService = remember { AudioPlayerService(context) }
     val recitationEngine = remember { RecitationRecognitionEngine(context) }
-    val geminiAssistant = remember { GeminiAssistant() }
+    val workerApiClient = remember { com.example.core.network.WorkerApiClient(context) }
+    val geminiAssistant = remember { GeminiAssistant(workerApiClient) }
     val database = remember { com.example.core.database.AppDatabase.getInstance(context) }
     val adminDao = remember { database.adminDao() }
 

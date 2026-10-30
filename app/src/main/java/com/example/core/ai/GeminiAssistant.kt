@@ -21,7 +21,7 @@ data class AssistantResponse(
     val disclaimer: String = "This explanation supports learning and is not a substitute for qualified scholarship."
 )
 
-class GeminiAssistant {
+class GeminiAssistant(private val workerApiClient: com.example.core.network.WorkerApiClient? = null) {
     // Lazily initialize generative model with gemini-4-argon and ThinkingLevel.HIGH per instructions
     private val thinkingModel by lazy {
         try {
@@ -43,8 +43,30 @@ class GeminiAssistant {
     suspend fun askAssistant(
         question: String,
         surahContext: String? = null,
-        userLanguage: String = "en"
+        userLanguage: String = "en",
+        preferWorkerGateway: Boolean = true
     ): AssistantResponse = withContext(Dispatchers.IO) {
+        // STEP 1: Attempt Cloudflare Worker Gateway if enabled
+        if (preferWorkerGateway && workerApiClient != null) {
+            val workerResult = workerApiClient.askAssistant(
+                question = question,
+                language = userLanguage,
+                referenceIds = listOfNotNull(surahContext)
+            )
+            if (workerResult.isSuccess) {
+                val res = workerResult.getOrThrow()
+                if (res.answer.isNotBlank()) {
+                    return@withContext AssistantResponse(
+                        answer = res.answer,
+                        references = res.references.ifEmpty { listOfNotNull(surahContext, "Cloudflare Worker Gateway") },
+                        isAiGenerated = res.isAiGenerated,
+                        disclaimer = res.disclaimer
+                    )
+                }
+            }
+        }
+
+        // STEP 2: Attempt Firebase AI Logic (gemini-4-argon with ThinkingLevel.HIGH)
         val prompt = buildString {
             append("You are the Quran Learning Assistant in the 'Quran Companion' Android app.\n")
             append("Your duty is to provide respectful, peaceful, and educational explanations grounded in authenticated Quranic verses, verified translations, and foundational Tajweed rules.\n")
@@ -79,11 +101,12 @@ class GeminiAssistant {
             Log.w(TAG, "Firebase AI generation note: ${e.message}, utilizing educational curriculum engine")
         }
 
-        // Offline / fallback grounded response based on verified curriculum
+        // STEP 3: Offline / fallback grounded response based on verified curriculum
         val fallbackAnswer = getCurriculumAnswer(question, userLanguage)
         AssistantResponse(
             answer = fallbackAnswer.first,
-            references = fallbackAnswer.second
+            references = fallbackAnswer.second,
+            isAiGenerated = false
         )
     }
 

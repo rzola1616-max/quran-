@@ -18,6 +18,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.ui.theme.*
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -241,6 +242,87 @@ fun SettingsScreen(
                             subtitle = "Content review, QA reports, sources & AI kill-switch",
                             onClick = onNavigateToAdminPortal
                         )
+                    }
+                }
+            }
+
+            // Cloudflare Worker & Online AI Gateway Section
+            item {
+                SectionHeader("Cloudflare Worker & Online AI Gateway")
+                Card(
+                    shape = RoundedCornerShape(16.dp),
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    val coroutineScope = rememberCoroutineScope()
+                    val context = androidx.compose.ui.platform.LocalContext.current
+                    val workerClient = remember { com.example.core.network.WorkerApiClient(context) }
+                    var testStatus by remember { mutableStateOf<String?>(null) }
+                    var isTesting by remember { mutableStateOf(false) }
+
+                    Column(modifier = Modifier.padding(16.dp)) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Icon(Icons.Default.CloudQueue, contentDescription = null, tint = ForestGreen)
+                            Spacer(modifier = Modifier.width(10.dp))
+                            Column {
+                                Text("Online AI Gateway (Cloudflare Worker)", fontWeight = FontWeight.SemiBold)
+                                Text(workerClient.getEffectiveBaseUrl(), style = MaterialTheme.typography.bodySmall, color = SecondaryGrey)
+                            }
+                        }
+
+                        Spacer(modifier = Modifier.height(10.dp))
+                        Text(
+                            text = "Supports /v1/health, /v1/config, /v1/assistant/ask, and /v1/reports. If the network or Cloudflare Worker is offline, the app seamlessly uses 100% offline curriculum and on-device phonetic analysis without interruption.",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = SecondaryGrey
+                        )
+
+                        Spacer(modifier = Modifier.height(12.dp))
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Button(
+                                onClick = {
+                                    isTesting = true
+                                    testStatus = null
+                                    coroutineScope.launch {
+                                        val res = workerClient.checkHealth()
+                                        if (res.isSuccess) {
+                                            val h = res.getOrThrow()
+                                            testStatus = "آن لائن کنیکٹڈ: ${h.status.uppercase()} (${h.latencyMs}ms)"
+                                        } else {
+                                            testStatus = "آف لائن موڈ: لوکل نصاب فعال ہے (Offline Mode Active)"
+                                        }
+                                        isTesting = false
+                                    }
+                                },
+                                colors = ButtonDefaults.buttonColors(containerColor = ForestGreen),
+                                shape = RoundedCornerShape(10.dp)
+                            ) {
+                                if (isTesting) {
+                                    CircularProgressIndicator(color = Color.White, modifier = Modifier.size(16.dp), strokeWidth = 2.dp)
+                                    Spacer(modifier = Modifier.width(6.dp))
+                                }
+                                Text("ٹیسٹ گیٹ وے (Test Gateway)")
+                            }
+
+                            testStatus?.let { status ->
+                                Surface(
+                                    shape = RoundedCornerShape(8.dp),
+                                    color = if (status.contains("آن لائن") || status.contains("OK")) SoftJade else MaterialTheme.colorScheme.surfaceVariant
+                                ) {
+                                    Text(
+                                        text = status,
+                                        fontSize = 11.sp,
+                                        fontWeight = FontWeight.Bold,
+                                        color = if (status.contains("آن لائن") || status.contains("OK")) DeepEmerald else SecondaryGrey,
+                                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+                                    )
+                                }
+                            }
+                        }
                     }
                 }
             }
